@@ -10,9 +10,7 @@
   ],
   "require": {
     "php": ">=7.0",
-    "illuminate/http": "^7.3",
-    "laravel/lumen-framework": "^7.0",
-    "laravel/laravel": "^7.3"
+    "illuminate/http": "^5.0|^6.0|^7.0"
   },
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.0",
