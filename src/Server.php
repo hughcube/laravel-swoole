@@ -3,11 +3,10 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 17:13
+ * Time: 17:13.
  */
 
 namespace HughCube\Laravel\Swoole;
-
 
 use HughCube\Laravel\Swoole\Events\BufferEmptyEvent;
 use HughCube\Laravel\Swoole\Events\BufferFullEvent;
@@ -89,49 +88,49 @@ class Server
      * @var array
      */
     protected $swooleServerEvents = [
-        'start' => StartEvent::class,
-        'shutDown' => ShutdownEvent::class,
-        'workerStart' => WorkerStartEvent::class,
-        'workerStop' => WorkerStopEvent::class,
-        'workerExit' => WorkerExitEvent::class,
-        'connect' => ConnectEvent::class,
-        'packet' => PacketEvent::class,
-        'bufferFull' => BufferFullEvent::class,
-        'bufferEmpty' => BufferEmptyEvent::class,
-        'task' => TaskEvent::class,
-        'finish' => FinishEvent::class,
-        'pipeMessage' => PipeMessageEvent::class,
-        'workerError' => WorkerErrorEvent::class,
+        'start'        => StartEvent::class,
+        'shutDown'     => ShutdownEvent::class,
+        'workerStart'  => WorkerStartEvent::class,
+        'workerStop'   => WorkerStopEvent::class,
+        'workerExit'   => WorkerExitEvent::class,
+        'connect'      => ConnectEvent::class,
+        'packet'       => PacketEvent::class,
+        'bufferFull'   => BufferFullEvent::class,
+        'bufferEmpty'  => BufferEmptyEvent::class,
+        'task'         => TaskEvent::class,
+        'finish'       => FinishEvent::class,
+        'pipeMessage'  => PipeMessageEvent::class,
+        'workerError'  => WorkerErrorEvent::class,
         'managerStart' => ManagerStartEvent::class,
-        'managerStop' => ManagerStopEvent::class,
-        'request' => RequestEvent::class,
-        'receive' => ReceiveEvent::class,
-        'handShake' => HandShakeEvent::class,
-        'open' => OpenEvent::class,
-        'message' => MessageEvent::class,
+        'managerStop'  => ManagerStopEvent::class,
+        'request'      => RequestEvent::class,
+        'receive'      => ReceiveEvent::class,
+        'handShake'    => HandShakeEvent::class,
+        'open'         => OpenEvent::class,
+        'message'      => MessageEvent::class,
     ];
 
     protected $swooleServerEventListeners = [
-        StartEvent::class => [StartListener::class],
-        ShutdownEvent::class => [ShutdownListener::class],
-        WorkerStartEvent::class => [WorkerStartListener::class],
-        WorkerStopEvent::class => [WorkerStopListener::class],
-        WorkerExitEvent::class => [WorkerExitListener::class],
-        ConnectEvent::class => [ConnectListener::class],
-        PacketEvent::class => [PacketListener::class],
-        BufferFullEvent::class => [BufferFullListener::class],
-        BufferEmptyEvent::class => [BufferEmptyListener::class],
-        TaskEvent::class => [TaskListener::class],
-        FinishEvent::class => [FinishListener::class],
-        PipeMessageEvent::class => [PipeMessageListener::class],
-        WorkerErrorEvent::class => [WorkerErrorListener::class],
+        StartEvent::class        => [StartListener::class],
+        ShutdownEvent::class     => [ShutdownListener::class],
+        WorkerStartEvent::class  => [WorkerStartListener::class],
+        WorkerStopEvent::class   => [WorkerStopListener::class],
+        WorkerExitEvent::class   => [WorkerExitListener::class],
+        ConnectEvent::class      => [ConnectListener::class],
+        PacketEvent::class       => [PacketListener::class],
+        BufferFullEvent::class   => [BufferFullListener::class],
+        BufferEmptyEvent::class  => [BufferEmptyListener::class],
+        TaskEvent::class         => [TaskListener::class],
+        FinishEvent::class       => [FinishListener::class],
+        PipeMessageEvent::class  => [PipeMessageListener::class],
+        WorkerErrorEvent::class  => [WorkerErrorListener::class],
         ManagerStartEvent::class => [ManagerStartListener::class],
-        ManagerStopEvent::class => [ManagerStopListener::class],
-        RequestEvent::class => [RequestListener::class, LaravelRequestListener::class],
-        ReceiveEvent::class => [ReceiveListener::class],
-        HandShakeEvent::class => [HandShakeListener::class],
-        OpenEvent::class => [OpenListener::class],
-        MessageEvent::class => [MessageListener::class]
+        ManagerStopEvent::class  => [ManagerStopListener::class],
+        RequestEvent::class      => [RequestListener::class, LaravelRequestListener::class],
+        ReceiveEvent::class      => [ReceiveListener::class],
+        HandShakeEvent::class    => [HandShakeListener::class],
+        OpenEvent::class         => [OpenListener::class],
+        MessageEvent::class      => [MessageListener::class],
     ];
 
     public function __construct($app, $config)
@@ -170,7 +169,7 @@ class Server
     }
 
     /**
-     * 注册swoole的事件
+     * 注册swoole的事件.
      */
     protected function bootstrapRegisterSwooleEvent()
     {
@@ -196,7 +195,7 @@ class Server
     }
 
     /**
-     * 注册swoole的时间监听
+     * 注册swoole的时间监听.
      */
     protected function bootstrapRegisterSwooleEventListener()
     {
@@ -211,11 +210,10 @@ class Server
     }
 
     /**
-     * 注册swoole的时间监听
+     * 注册swoole的时间监听.
      */
     protected function bootstrapSwooleConfig()
     {
-
     }
 
     /**
@@ -262,7 +260,6 @@ class Server
 
     protected function getEventDispatcher()
     {
-
     }
 
     /**

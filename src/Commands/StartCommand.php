@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 19:33
+ * Time: 19:33.
  */
 
 namespace HughCube\Laravel\Swoole\Commands;
@@ -30,9 +30,9 @@ class StartCommand extends Command
     /**
      * Execute the console command.
      *
-     * @return void
      * @throws \Exception
      *
+     * @return void
      */
     public function handle()
     {

@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 16:28
+ * Time: 16:28.
  */
 
 namespace HughCube\Laravel\Swoole\Events;
@@ -11,13 +11,12 @@ namespace HughCube\Laravel\Swoole\Events;
 use Swoole\Server as SwooleServer;
 
 /**
- * Class StartEvent
- * @package HughCube\Laravel\Swoole\Events
+ * Class StartEvent.
+ *
  * @see https://wiki.swoole.com/#/server/events?id=onstart
  */
 class StartEvent extends Event
 {
-
     /**
      * @var SwooleServer
      */
@@ -32,7 +31,7 @@ class StartEvent extends Event
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function receiveSwooleEventParameters(array $parameters)
     {
