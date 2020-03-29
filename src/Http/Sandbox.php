@@ -6,7 +6,7 @@
  * Time: 16:14
  */
 
-namespace HughCube\Laravel\Swoole;
+namespace HughCube\Laravel\Swoole\Http;
 
 use HughCube\Laravel\Swoole\Exceptions\UnknownApplicationException;
 use Illuminate\Foundation\Application as LaravelApplication;
