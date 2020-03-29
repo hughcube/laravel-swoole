@@ -8,8 +8,8 @@
     <a href="https://github.com/hughcube/laravel-swoole/actions?query=workflow%3ALint">
         <img src="https://github.com/hughcube/laravel-swoole/workflows/Lint/badge.svg" alt="Lint Actions status">
     </a>
-    <a href="https://styleci.io/repos/249034690">
-        <img src="https://github.styleci.io/repos/249034690/shield?branch=master" alt="StyleCI">
+    <a href="https://styleci.io/repos/250978394">
+        <img src="https://github.styleci.io/repos/250978394/shield?branch=master" alt="StyleCI">
     </a>
     <a href="https://scrutinizer-ci.com/g/hughcube/laravel-swoole/?branch=master">
         <img src="https://scrutinizer-ci.com/g/hughcube/laravel-swoole/badges/coverage.png?b=master" alt="Code Coverage">
