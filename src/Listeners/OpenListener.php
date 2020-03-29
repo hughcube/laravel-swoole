@@ -8,12 +8,11 @@
 
 namespace HughCube\Laravel\Swoole\Listeners;
 
-use HughCube\Laravel\Swoole\Events\TaskEvent;
+use HughCube\Laravel\Swoole\Events\OpenEvent;
 
-class TaskListener extends Listener
+class OpenListener extends Listener
 {
-    public function handle(TaskEvent $event)
+    public function handle(OpenEvent $event)
     {
-
     }
 }

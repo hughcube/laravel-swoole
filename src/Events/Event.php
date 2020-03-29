@@ -20,6 +20,7 @@ class Event
 
     public function __construct(Server $server)
     {
+        $this->server = $server;
     }
 
     public function getServer()
@@ -29,6 +30,10 @@ class Event
 
     public function canDispatch(SwooleServer $swooleServer)
     {
-        return false;
+        return true;
+    }
+
+    public function receiveSwooleEventParameters(array $parameters)
+    {
     }
 }

@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\ManagerStartEvent;
 
 class ManagerStartListener extends Listener
 {
-    public function handle(ManagerStartEvent $event, array $payload)
+    public function handle(ManagerStartEvent $event)
     {
         $event->getServer()->setProcessName('manager process');
     }

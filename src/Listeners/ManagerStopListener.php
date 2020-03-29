@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\ManagerStopEvent;
 
 class ManagerStopListener extends Listener
 {
-    public function handle(ManagerStopEvent $event, array $payload)
+    public function handle(ManagerStopEvent $event)
     {
 
     }

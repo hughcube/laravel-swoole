@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\PacketEvent;
 
 class PacketListener extends Listener
 {
-    public function handle(PacketEvent $event, array $payload)
+    public function handle(PacketEvent $event)
     {
 
     }

@@ -8,16 +8,16 @@
 
 namespace HughCube\Laravel\Swoole\Listeners;
 
-use HughCube\Laravel\Swoole\Events\BufferEmptyEvent;
+use HughCube\Laravel\Swoole\Events\HandShakeEvent;
 
 /**
  * Class BufferEmptyListener
  * @package HughCube\Laravel\Swoole\Listeners
  * @see
  */
-class BufferEmptyListener extends Listener
+class HandShakeListener extends Listener
 {
-    public function handle(BufferEmptyEvent $event)
+    public function handle(HandShakeEvent $event)
     {
 
     }

@@ -8,6 +8,10 @@
 
 namespace HughCube\Laravel\Swoole\Events;
 
+
+use Swoole\Server as SwooleServer;
+
 class InitServerEvent extends Event
 {
+
 }

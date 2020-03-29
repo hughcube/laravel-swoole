@@ -10,9 +10,17 @@ namespace HughCube\Laravel\Swoole\Listeners;
 
 use HughCube\Laravel\Swoole\Events\WorkerStartEvent;
 
+/**
+ * Class WorkerStartListener
+ * @package HughCube\Laravel\Swoole\Listeners
+ * @see https://wiki.swoole.com/#/server/events?id=onstart
+ */
 class WorkerStartListener extends Listener
 {
-    public function handle(WorkerStartEvent $event, array $payload)
+    /**
+     * @param WorkerStartEvent $event
+     */
+    public function handle(WorkerStartEvent $event)
     {
         if ($event->getServer()->getSwooleServer()->taskworker) {
             $event->getServer()->setProcessName('task process');

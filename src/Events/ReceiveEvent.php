@@ -11,12 +11,13 @@ namespace HughCube\Laravel\Swoole\Events;
 use Swoole\Server as SwooleServer;
 
 /**
- * Class PipeMessageEvent
+ * Class ReceiveEvent
  * @package HughCube\Laravel\Swoole\Events
- * @see https://wiki.swoole.com/#/server/events?id=onpipemessage
+ * @see https://wiki.swoole.com/#/server/events?id=onreceive
  */
-class PipeMessageEvent extends Event
+class ReceiveEvent extends Event
 {
+
     /**
      * @var SwooleServer
      */
@@ -25,12 +26,17 @@ class PipeMessageEvent extends Event
     /**
      * @var integer
      */
-    protected $src_worker_id;
+    public $fd;
 
     /**
-     * @var mixed
+     * @var integer
      */
-    protected $message;
+    public $reactorId;
+
+    /**
+     * @var string
+     */
+    public $data;
 
     /**
      * @return SwooleServer
@@ -43,23 +49,32 @@ class PipeMessageEvent extends Event
     /**
      * @return int
      */
-    public function getSrcWorkerId(): int
+    public function getFd(): int
     {
-        return $this->src_worker_id;
+        return $this->fd;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getMessage()
+    public function getReactorId(): int
     {
-        return $this->message;
+        return $this->reactorId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getData(): string
+    {
+        return $this->data;
     }
 
     public function receiveSwooleEventParameters(array $parameters)
     {
         $this->swooleServer = isset($parameters[0]) ? $parameters[0] : null;
-        $this->src_worker_id = isset($parameters[1]) ? $parameters[1] : null;
-        $this->message = isset($parameters[2]) ? $parameters[2] : null;
+        $this->fd = isset($parameters[1]) ? $parameters[1] : null;
+        $this->reactorId = isset($parameters[2]) ? $parameters[2] : null;
+        $this->data = isset($parameters[3]) ? $parameters[3] : null;
     }
 }

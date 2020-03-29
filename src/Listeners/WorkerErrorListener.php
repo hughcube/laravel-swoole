@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\WorkerErrorEvent;
 
 class WorkerErrorListener extends Listener
 {
-    public function handle(WorkerErrorEvent $event, array $payload)
+    public function handle(WorkerErrorEvent $event)
     {
 
     }

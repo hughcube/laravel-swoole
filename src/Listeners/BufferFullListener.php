@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\BufferFullEvent;
 
 class BufferFullListener extends Listener
 {
-    public function handle(BufferFullEvent $event, array $payload)
+    public function handle(BufferFullEvent $event)
     {
 
     }

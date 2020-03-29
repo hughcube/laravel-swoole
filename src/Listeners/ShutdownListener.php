@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\ShutdownEvent;
 
 class ShutdownListener extends Listener
 {
-    public function handle(ShutdownEvent $event, array $payload)
+    public function handle(ShutdownEvent $event)
     {
 
     }

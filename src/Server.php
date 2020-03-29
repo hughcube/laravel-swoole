@@ -11,34 +11,47 @@ namespace HughCube\Laravel\Swoole;
 
 use HughCube\Laravel\Swoole\Events\BufferEmptyEvent;
 use HughCube\Laravel\Swoole\Events\BufferFullEvent;
+use HughCube\Laravel\Swoole\Events\ConnectEvent;
 use HughCube\Laravel\Swoole\Events\Event;
 use HughCube\Laravel\Swoole\Events\FinishEvent;
+use HughCube\Laravel\Swoole\Events\HandShakeEvent;
 use HughCube\Laravel\Swoole\Events\InitServerEvent;
 use HughCube\Laravel\Swoole\Events\ManagerStartEvent;
 use HughCube\Laravel\Swoole\Events\ManagerStopEvent;
+use HughCube\Laravel\Swoole\Events\MessageEvent;
+use HughCube\Laravel\Swoole\Events\OpenEvent;
 use HughCube\Laravel\Swoole\Events\PacketEvent;
 use HughCube\Laravel\Swoole\Events\PipeMessageEvent;
+use HughCube\Laravel\Swoole\Events\ReceiveEvent;
 use HughCube\Laravel\Swoole\Events\RequestEvent;
 use HughCube\Laravel\Swoole\Events\RunServerEvent;
 use HughCube\Laravel\Swoole\Events\ShutdownEvent;
 use HughCube\Laravel\Swoole\Events\StartEvent;
 use HughCube\Laravel\Swoole\Events\TaskEvent;
 use HughCube\Laravel\Swoole\Events\WorkerErrorEvent;
+use HughCube\Laravel\Swoole\Events\WorkerExitEvent;
 use HughCube\Laravel\Swoole\Events\WorkerStartEvent;
 use HughCube\Laravel\Swoole\Events\WorkerStopEvent;
 use HughCube\Laravel\Swoole\Exceptions\UnknownProtocolException;
+use HughCube\Laravel\Swoole\Http\LaravelRequestListener;
 use HughCube\Laravel\Swoole\Listeners\BufferEmptyListener;
 use HughCube\Laravel\Swoole\Listeners\BufferFullListener;
+use HughCube\Laravel\Swoole\Listeners\ConnectListener;
 use HughCube\Laravel\Swoole\Listeners\FinishListener;
+use HughCube\Laravel\Swoole\Listeners\HandShakeListener;
 use HughCube\Laravel\Swoole\Listeners\ManagerStartListener;
 use HughCube\Laravel\Swoole\Listeners\ManagerStopListener;
+use HughCube\Laravel\Swoole\Listeners\MessageListener;
+use HughCube\Laravel\Swoole\Listeners\OpenListener;
 use HughCube\Laravel\Swoole\Listeners\PacketListener;
 use HughCube\Laravel\Swoole\Listeners\PipeMessageListener;
+use HughCube\Laravel\Swoole\Listeners\ReceiveListener;
 use HughCube\Laravel\Swoole\Listeners\RequestListener;
 use HughCube\Laravel\Swoole\Listeners\ShutdownListener;
 use HughCube\Laravel\Swoole\Listeners\StartListener;
 use HughCube\Laravel\Swoole\Listeners\TaskListener;
 use HughCube\Laravel\Swoole\Listeners\WorkerErrorListener;
+use HughCube\Laravel\Swoole\Listeners\WorkerExitListener;
 use HughCube\Laravel\Swoole\Listeners\WorkerStartListener;
 use HughCube\Laravel\Swoole\Listeners\WorkerStopListener;
 use Illuminate\Foundation\Application as LaravelApplication;
@@ -80,6 +93,8 @@ class Server
         'shutDown' => ShutdownEvent::class,
         'workerStart' => WorkerStartEvent::class,
         'workerStop' => WorkerStopEvent::class,
+        'workerExit' => WorkerExitEvent::class,
+        'connect' => ConnectEvent::class,
         'packet' => PacketEvent::class,
         'bufferFull' => BufferFullEvent::class,
         'bufferEmpty' => BufferEmptyEvent::class,
@@ -90,6 +105,10 @@ class Server
         'managerStart' => ManagerStartEvent::class,
         'managerStop' => ManagerStopEvent::class,
         'request' => RequestEvent::class,
+        'receive' => ReceiveEvent::class,
+        'handShake' => HandShakeEvent::class,
+        'open' => OpenEvent::class,
+        'message' => MessageEvent::class,
     ];
 
     protected $swooleServerEventListeners = [
@@ -97,6 +116,8 @@ class Server
         ShutdownEvent::class => [ShutdownListener::class],
         WorkerStartEvent::class => [WorkerStartListener::class],
         WorkerStopEvent::class => [WorkerStopListener::class],
+        WorkerExitEvent::class => [WorkerExitListener::class],
+        ConnectEvent::class => [ConnectListener::class],
         PacketEvent::class => [PacketListener::class],
         BufferFullEvent::class => [BufferFullListener::class],
         BufferEmptyEvent::class => [BufferEmptyListener::class],
@@ -106,26 +127,36 @@ class Server
         WorkerErrorEvent::class => [WorkerErrorListener::class],
         ManagerStartEvent::class => [ManagerStartListener::class],
         ManagerStopEvent::class => [ManagerStopListener::class],
-        RequestEvent::class => [RequestListener::class],
+        RequestEvent::class => [RequestListener::class, LaravelRequestListener::class],
+        ReceiveEvent::class => [ReceiveListener::class],
+        HandShakeEvent::class => [HandShakeListener::class],
+        OpenEvent::class => [OpenListener::class],
+        MessageEvent::class => [MessageListener::class]
     ];
 
     public function __construct($app, $config)
     {
+        $this->app = $app;
+        $this->config = $config;
+
         $this->app->make('events')->dispatch(new InitServerEvent($this));
 
-        $this->bootstrapCreateSwooleEvent();
+        $this->bootstrapCreateSwoole();
     }
 
     /**
      * 创建swoole对象
      */
-    protected function bootstrapCreateSwooleEvent()
+    protected function bootstrapCreateSwoole()
     {
         $protocol = Arr::get($this->config, 'protocol', 'http');
         $ip = Arr::get($this->config, 'listen_ip', '0.0.0.0');
         $port = Arr::get($this->config, 'listen_port', 1123);
         $socketType = Arr::get($this->config, 'socket_type', 'SWOOLE_SOCK_TCP');
         $model = Arr::get($this->config, 'swoole_model', 'SWOOLE_PROCESS');
+
+        $socketType = constant($socketType);
+        $model = constant($model);
 
         if ('http' === $protocol) {
             $this->swooleServer = new SwooleHttpServer($ip, $port, $model, $socketType);
@@ -154,7 +185,12 @@ class Server
             }
 
             $swooleServer->on($eventName, function () use ($event) {
-                $this->app->make('events')->dispatch($event, func_get_args());
+                $event->receiveSwooleEventParameters(func_get_args());
+
+                /** @var \Illuminate\Events\Dispatcher $events */
+                $events = $this->app->make('events');
+
+                $events->dispatch($event);
             });
         }
     }
@@ -166,7 +202,10 @@ class Server
     {
         foreach ($this->swooleServerEventListeners as $event => $listeners) {
             foreach ($listeners as $listener) {
-                $this->app->make('events')->listen($event, $listener);
+                /** @var \Illuminate\Events\Dispatcher $events */
+                $events = $this->app->make('events');
+
+                $events->listen($event, $listener);
             }
         }
     }
@@ -189,6 +228,8 @@ class Server
         $this->bootstrapSwooleConfig();
         $this->bootstrapRegisterSwooleEvent();
         $this->bootstrapRegisterSwooleEventListener();
+
+        $this->getSwooleServer()->start();
     }
 
     /**
@@ -222,5 +263,13 @@ class Server
     protected function getEventDispatcher()
     {
 
+    }
+
+    /**
+     * @return LaravelApplication|LumenApplication
+     */
+    public function getApp()
+    {
+        return $this->app;
     }
 }

@@ -12,8 +12,10 @@ use HughCube\Laravel\Swoole\Events\StartEvent;
 
 class StartListener extends Listener
 {
-    public function handle(StartEvent $event, array $payload)
+    public function handle(StartEvent $event)
     {
+        $event->getServer()->getSwooleServer()->port;
+
         $event->getServer()->setProcessName('master process');
     }
 }

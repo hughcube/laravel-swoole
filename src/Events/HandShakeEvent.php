@@ -14,9 +14,9 @@ use Swoole\Http\Response;
 /**
  * Class RequestEvent
  * @package HughCube\Laravel\Swoole\Events
- * @see https://wiki.swoole.com/#/http_server?id=on
+ * @see https://wiki.swoole.com/#/websocket_server?id=onhandshake
  */
-class RequestEvent extends Event
+class HandShakeEvent extends Event
 {
     /**
      * @var Request
@@ -27,11 +27,6 @@ class RequestEvent extends Event
      * @var Response
      */
     protected $response;
-
-    /**
-     * @var bool
-     */
-    protected $isSend = false;
 
     /**
      * @return Request
@@ -47,22 +42,6 @@ class RequestEvent extends Event
     public function getResponse(): Response
     {
         return $this->response;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSend(): bool
-    {
-        return $this->isSend;
-    }
-
-    /**
-     * @param bool $isSend
-     */
-    public function setIsSend(bool $isSend)
-    {
-        $this->isSend = $isSend;
     }
 
     public function receiveSwooleEventParameters(array $parameters)

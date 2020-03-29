@@ -8,12 +8,11 @@
 
 namespace HughCube\Laravel\Swoole\Http;
 
-use HughCube\Laravel\Swoole\Exceptions\UnknownApplicationException;
 use Illuminate\Foundation\Application as LaravelApplication;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\Response as IlluminateResponse;
 use Laravel\Lumen\Application as LumenApplication;
-use Symfony\Component\HttpKernel\Kernel;
+use Swoole\Http\Request as SwooleRequest;
+use Swoole\Http\Response as SwooleResponse;
 
 class Sandbox
 {
@@ -22,29 +21,59 @@ class Sandbox
      */
     protected $app;
 
-    public function __construct($app, Request $request)
+    public function __construct($app)
     {
+        $this->app = $app;
     }
 
     /**
-     * @param Request $request
-     * @return Response|\Symfony\Component\HttpFoundation\Response
-     * @throws \Exception
-     * @throws UnknownApplicationException
+     * @param SwooleRequest $request
+     * @param SwooleResponse $swooleResponse
      */
-    public function handleRequest(Request $request)
+    public function handle(SwooleRequest $request, SwooleResponse $swooleResponse)
     {
-        if ($this->app instanceof LumenApplication) {
-            /** @var Kernel $kernel */
-            $kernel = $this->app->make(Kernel::class);
+        /** @var IlluminateResponse $response */
+        $response = $this->app->dispatch(Request::createFromSwoole($request));
 
-            return $kernel->handle($request);
+        $this->sendIlluminateResponseHeaders($response, $swooleResponse);
+        $swooleResponse->end($response->getContent());
+    }
+
+    /**
+     * @param IlluminateResponse $illuminateResponse
+     * @param SwooleResponse $swooleResponse
+     */
+    public function sendIlluminateResponseHeaders(
+        IlluminateResponse $illuminateResponse,
+        SwooleResponse $swooleResponse
+    ) {
+        // headers
+        foreach ($illuminateResponse->headers->allPreserveCaseWithoutCookies() as $name => $values) {
+            $replace = 0 === strcasecmp($name, 'Content-Type');
+            foreach ($values as $value) {
+                $swooleResponse->header($name, $value);
+            }
         }
 
-        if ($this->app instanceof LaravelApplication) {
-            return $this->app->dispatch($request);
+        // cookies
+        $hasIsRaw = null;
+        foreach ($illuminateResponse->headers->getCookies() as $cookie) {
+            if ($hasIsRaw === null) {
+                $hasIsRaw = method_exists($cookie, 'isRaw');
+            }
+
+            $setCookie = $hasIsRaw && $cookie->isRaw() ? 'rawcookie' : 'cookie';
+            $swooleResponse->{$setCookie}(
+                $cookie->getName(),
+                $cookie->getValue(),
+                $cookie->getExpiresTime(),
+                $cookie->getPath(),
+                $cookie->getDomain(),
+                $cookie->isSecure(),
+                $cookie->isHttpOnly()
+            );
         }
 
-        throw new UnknownApplicationException();
+        $swooleResponse->status($illuminateResponse->getStatusCode());
     }
 }

@@ -8,6 +8,27 @@
 
 namespace HughCube\Laravel\Swoole\Events;
 
+
+use Swoole\Server as SwooleServer;
+
 class BufferFullEvent extends Event
 {
+
+/**
+     * @var SwooleServer
+     */
+    protected $swooleServer;
+
+    /**
+     * @return SwooleServer
+     */
+    public function getSwooleServer(): SwooleServer
+    {
+        return $this->swooleServer;
+    }
+
+    public function receiveSwooleEventParameters(array $parameters)
+    {
+        $this->swooleServer = isset($parameters[0]) ? $parameters[0] : null;
+    }
 }

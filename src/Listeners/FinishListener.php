@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\FinishEvent;
 
 class FinishListener extends Listener
 {
-    public function handle(FinishEvent $event, array $payload)
+    public function handle(FinishEvent $event)
     {
 
     }

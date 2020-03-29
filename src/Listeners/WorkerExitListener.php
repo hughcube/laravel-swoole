@@ -8,11 +8,11 @@
 
 namespace HughCube\Laravel\Swoole\Listeners;
 
-use HughCube\Laravel\Swoole\Events\TaskEvent;
+use HughCube\Laravel\Swoole\Events\WorkerExitEvent;
 
-class TaskListener extends Listener
+class WorkerExitListener extends Listener
 {
-    public function handle(TaskEvent $event)
+    public function handle(WorkerExitEvent $event)
     {
 
     }

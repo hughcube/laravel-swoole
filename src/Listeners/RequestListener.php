@@ -8,11 +8,11 @@
 
 namespace HughCube\Laravel\Swoole\Listeners;
 
-use HughCube\Laravel\Swoole\Events\WorkerStopEvent;
+use HughCube\Laravel\Swoole\Events\RequestEvent;
 
 class RequestListener extends Listener
 {
-    public function handle(RequestListener $event, array $payload)
+    public function handle(RequestEvent $event)
     {
 
     }

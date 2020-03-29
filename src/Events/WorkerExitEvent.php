@@ -11,16 +11,21 @@ namespace HughCube\Laravel\Swoole\Events;
 use Swoole\Server as SwooleServer;
 
 /**
- * Class ManagerStopEvent
+ * Class WorkerExitEvent
  * @package HughCube\Laravel\Swoole\Events
- * @see https://wiki.swoole.com/#/server/events?id=onmanagerstop
+ * @see https://wiki.swoole.com/#/server/events?id=onworkerexit
  */
-class ManagerStopEvent extends Event
+class WorkerExitEvent extends Event
 {
     /**
      * @var SwooleServer
      */
     protected $swooleServer;
+
+    /**
+     * @var integer
+     */
+    public $workerId;
 
     /**
      * @return SwooleServer
@@ -30,8 +35,17 @@ class ManagerStopEvent extends Event
         return $this->swooleServer;
     }
 
+    /**
+     * @return int
+     */
+    public function getWorkerId(): int
+    {
+        return $this->workerId;
+    }
+
     public function receiveSwooleEventParameters(array $parameters)
     {
         $this->swooleServer = isset($parameters[0]) ? $parameters[0] : null;
+        $this->workerId = isset($parameters[1]) ? $parameters[1] : null;
     }
 }

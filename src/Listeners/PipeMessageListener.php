@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\PipeMessageEvent;
 
 class PipeMessageListener extends Listener
 {
-    public function handle(PipeMessageEvent $event, array $payload)
+    public function handle(PipeMessageEvent $event)
     {
 
     }

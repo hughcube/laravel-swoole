@@ -11,16 +11,27 @@ namespace HughCube\Laravel\Swoole\Events;
 use Swoole\Server as SwooleServer;
 
 /**
- * Class ManagerStopEvent
+ * Class CloseEvent
  * @package HughCube\Laravel\Swoole\Events
- * @see https://wiki.swoole.com/#/server/events?id=onmanagerstop
+ * @see https://wiki.swoole.com/#/server/events?id=onclose
  */
-class ManagerStopEvent extends Event
+class CloseEvent extends Event
 {
+
     /**
      * @var SwooleServer
      */
     protected $swooleServer;
+
+    /**
+     * @var integer
+     */
+    protected $fd;
+
+    /**
+     * @var integer
+     */
+    protected $reactorId;
 
     /**
      * @return SwooleServer
@@ -30,8 +41,26 @@ class ManagerStopEvent extends Event
         return $this->swooleServer;
     }
 
+    /**
+     * @return int
+     */
+    public function getFd(): int
+    {
+        return $this->fd;
+    }
+
+    /**
+     * @return int
+     */
+    public function getReactorId(): int
+    {
+        return $this->reactorId;
+    }
+
     public function receiveSwooleEventParameters(array $parameters)
     {
         $this->swooleServer = isset($parameters[0]) ? $parameters[0] : null;
+        $this->fd = isset($parameters[1]) ? $parameters[1] : null;
+        $this->reactorId = isset($parameters[2]) ? $parameters[2] : null;
     }
 }

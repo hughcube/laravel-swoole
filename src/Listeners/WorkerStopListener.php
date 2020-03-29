@@ -12,7 +12,7 @@ use HughCube\Laravel\Swoole\Events\WorkerStopEvent;
 
 class WorkerStopListener extends Listener
 {
-    public function handle(WorkerStopEvent $event, array $payload)
+    public function handle(WorkerStopEvent $event)
     {
 
     }
