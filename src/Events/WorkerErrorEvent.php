@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 16:28
+ * Time: 16:28.
  */
 
 namespace HughCube\Laravel\Swoole\Events;
@@ -11,8 +11,8 @@ namespace HughCube\Laravel\Swoole\Events;
 use Swoole\Server as SwooleServer;
 
 /**
- * Class WorkerErrorEvent
- * @package HughCube\Laravel\Swoole\Events
+ * Class WorkerErrorEvent.
+ *
  * @see https://wiki.swoole.com/#/server/events?id=onworkererror
  */
 class WorkerErrorEvent extends Event
@@ -23,22 +23,22 @@ class WorkerErrorEvent extends Event
     protected $swooleServer;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $worker_id;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $worker_pid;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $exit_code;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $signal;
 

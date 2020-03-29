@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 16:28
+ * Time: 16:28.
  */
 
 namespace HughCube\Laravel\Swoole\Listeners;
@@ -11,8 +11,8 @@ namespace HughCube\Laravel\Swoole\Listeners;
 use HughCube\Laravel\Swoole\Events\WorkerStartEvent;
 
 /**
- * Class WorkerStartListener
- * @package HughCube\Laravel\Swoole\Listeners
+ * Class WorkerStartListener.
+ *
  * @see https://wiki.swoole.com/#/server/events?id=onstart
  */
 class WorkerStartListener extends Listener

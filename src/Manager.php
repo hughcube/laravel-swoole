@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 16:39
+ * Time: 16:39.
  */
 
 namespace HughCube\Laravel\Swoole;
@@ -40,7 +40,7 @@ class Manager
      * Manager constructor.
      *
      * @param LaravelApplication|LumenApplication $app
-     * @param array $config
+     * @param array                               $config
      */
     public function __construct($app, array $config)
     {
@@ -71,9 +71,9 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return Server
      * @throws \InvalidArgumentException
      *
+     * @return Server
      */
     public function resolve($name = null)
     {

@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 16:14
+ * Time: 16:14.
  */
 
 namespace HughCube\Laravel\Swoole\Http;

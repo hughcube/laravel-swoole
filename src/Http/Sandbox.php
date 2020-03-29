@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/29
- * Time: 16:14
+ * Time: 16:14.
  */
 
 namespace HughCube\Laravel\Swoole\Http;
@@ -27,7 +27,7 @@ class Sandbox
     }
 
     /**
-     * @param SwooleRequest $request
+     * @param SwooleRequest  $request
      * @param SwooleResponse $swooleResponse
      */
     public function handle(SwooleRequest $request, SwooleResponse $swooleResponse)
@@ -41,7 +41,7 @@ class Sandbox
 
     /**
      * @param IlluminateResponse $illuminateResponse
-     * @param SwooleResponse $swooleResponse
+     * @param SwooleResponse     $swooleResponse
      */
     public function sendIlluminateResponseHeaders(
         IlluminateResponse $illuminateResponse,
