@@ -32,8 +32,12 @@ class Request extends IlluminateRequest
         /** @var array $files The FILES parameters */
         $files = empty($swooleRequest->files) ? [] : $swooleRequest->files;
 
+        /** @var array $header The http header parameters */
+        $header = empty($swooleRequest->header) ? [] : $swooleRequest->header;
+
         /** @var array $server The SERVER parameters */
         $server = empty($swooleRequest->server) ? [] : $swooleRequest->server;
+        $server = static::makeServerParameters($server, $header);
 
         /** @var null|string $content The raw body data */
         $content = $swooleRequest->rawContent();
@@ -52,5 +56,33 @@ class Request extends IlluminateRequest
         }
 
         return $request;
+    }
+
+    /**
+     * @param array $server
+     * @param array $header
+     * @return array
+     */
+    protected static function makeServerParameters(array $server, array $header)
+    {
+        $phpServer = [];
+
+        foreach ($server as $key => $value) {
+            $key = strtoupper($key);
+            $phpServer[$key] = $value;
+        }
+
+        foreach ($header as $key => $value) {
+            $key = str_replace('-', '_', $key);
+            $key = strtoupper($key);
+
+            if (!in_array($key, ['REMOTE_ADDR', 'SERVER_PORT', 'HTTPS'])) {
+                $key = 'HTTP_' . $key;
+            }
+
+            $phpServer[$key] = $value;
+        }
+
+        return $phpServer;
     }
 }

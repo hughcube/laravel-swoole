@@ -8,6 +8,7 @@
 
 namespace HughCube\Laravel\Swoole;
 
+use HughCube\Laravel\Swoole\Counter\Manager as CounterManager;
 use HughCube\Laravel\Swoole\Events\BufferEmptyEvent;
 use HughCube\Laravel\Swoole\Events\BufferFullEvent;
 use HughCube\Laravel\Swoole\Events\ConnectEvent;
@@ -53,6 +54,9 @@ use HughCube\Laravel\Swoole\Listeners\WorkerErrorListener;
 use HughCube\Laravel\Swoole\Listeners\WorkerExitListener;
 use HughCube\Laravel\Swoole\Listeners\WorkerStartListener;
 use HughCube\Laravel\Swoole\Listeners\WorkerStopListener;
+use HughCube\Laravel\Swoole\Mutex\Manager as MutexManager;
+use HughCube\Laravel\Swoole\Process\Manager as ProcessManager;
+use HughCube\Laravel\Swoole\Table\Manager as TableManager;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -83,54 +87,69 @@ class Server
     protected $swooleServer;
 
     /**
+     * @var TableManager
+     */
+    protected $tableManager;
+
+    /**
+     * @var CounterManager
+     */
+    protected $counterManager;
+
+    /**
+     * @var MutexManager
+     */
+    protected $mutexManager;
+
+    /**
      * Server events.
      *
      * @var array
      */
     protected $swooleServerEvents = [
-        'start'        => StartEvent::class,
-        'shutDown'     => ShutdownEvent::class,
-        'workerStart'  => WorkerStartEvent::class,
-        'workerStop'   => WorkerStopEvent::class,
-        'workerExit'   => WorkerExitEvent::class,
-        'connect'      => ConnectEvent::class,
-        'packet'       => PacketEvent::class,
-        'bufferFull'   => BufferFullEvent::class,
-        'bufferEmpty'  => BufferEmptyEvent::class,
-        'task'         => TaskEvent::class,
-        'finish'       => FinishEvent::class,
-        'pipeMessage'  => PipeMessageEvent::class,
-        'workerError'  => WorkerErrorEvent::class,
+        'start' => StartEvent::class,
+        'shutDown' => ShutdownEvent::class,
+        'workerStart' => WorkerStartEvent::class,
+        'workerStop' => WorkerStopEvent::class,
+        'workerExit' => WorkerExitEvent::class,
+        'connect' => ConnectEvent::class,
+        'packet' => PacketEvent::class,
+        'bufferFull' => BufferFullEvent::class,
+        'bufferEmpty' => BufferEmptyEvent::class,
+        'task' => TaskEvent::class,
+        'finish' => FinishEvent::class,
+        'pipeMessage' => PipeMessageEvent::class,
+        'workerError' => WorkerErrorEvent::class,
         'managerStart' => ManagerStartEvent::class,
-        'managerStop'  => ManagerStopEvent::class,
-        'request'      => RequestEvent::class,
-        'receive'      => ReceiveEvent::class,
-        'handShake'    => HandShakeEvent::class,
-        'open'         => OpenEvent::class,
-        'message'      => MessageEvent::class,
+        'managerStop' => ManagerStopEvent::class,
+        'request' => RequestEvent::class,
+        'receive' => ReceiveEvent::class,
+        'handShake' => HandShakeEvent::class,
+        'open' => OpenEvent::class,
+        'message' => MessageEvent::class,
     ];
 
     protected $swooleServerEventListeners = [
-        StartEvent::class        => [StartListener::class],
-        ShutdownEvent::class     => [ShutdownListener::class],
-        WorkerStartEvent::class  => [WorkerStartListener::class],
-        WorkerStopEvent::class   => [WorkerStopListener::class],
-        WorkerExitEvent::class   => [WorkerExitListener::class],
-        ConnectEvent::class      => [ConnectListener::class],
-        PacketEvent::class       => [PacketListener::class],
-        BufferFullEvent::class   => [BufferFullListener::class],
-        BufferEmptyEvent::class  => [BufferEmptyListener::class],
-        TaskEvent::class         => [TaskListener::class],
-        FinishEvent::class       => [FinishListener::class],
-        PipeMessageEvent::class  => [PipeMessageListener::class],
-        WorkerErrorEvent::class  => [WorkerErrorListener::class],
+        StartEvent::class => [StartListener::class],
+        ShutdownEvent::class => [ShutdownListener::class],
+        WorkerStartEvent::class => [WorkerStartListener::class],
+        WorkerStopEvent::class => [WorkerStopListener::class],
+        WorkerExitEvent::class => [WorkerExitListener::class],
+        ConnectEvent::class => [ConnectListener::class],
+        PacketEvent::class => [PacketListener::class],
+        BufferFullEvent::class => [BufferFullListener::class],
+        BufferEmptyEvent::class => [BufferEmptyListener::class],
+        TaskEvent::class => [TaskListener::class],
+        FinishEvent::class => [FinishListener::class],
+        PipeMessageEvent::class => [PipeMessageListener::class],
+        WorkerErrorEvent::class => [WorkerErrorListener::class],
         ManagerStartEvent::class => [ManagerStartListener::class],
-        ManagerStopEvent::class  => [ManagerStopListener::class],
-        RequestEvent::class      => [RequestListener::class, LaravelRequestListener::class],
-        ReceiveEvent::class      => [ReceiveListener::class],
-        HandShakeEvent::class    => [HandShakeListener::class],
-        OpenEvent::class         => [OpenListener::class],
-        MessageEvent::class      => [MessageListener::class],
+        ManagerStopEvent::class => [ManagerStopListener::class],
+        RequestEvent::class => [RequestListener::class, LaravelRequestListener::class],
+        ReceiveEvent::class => [ReceiveListener::class],
+        HandShakeEvent::class => [HandShakeListener::class],
+        OpenEvent::class => [OpenListener::class],
+        MessageEvent::class => [MessageListener::class],
     ];
 
     public function __construct($app, $config)
@@ -141,6 +160,8 @@ class Server
         $this->app->make('events')->dispatch(new InitServerEvent($this));
 
         $this->bootstrapCreateSwoole();
+        $this->bootstrapCreateTable();
+        $this->bootstrapCreateCounter();
     }
 
     /**
@@ -151,11 +172,8 @@ class Server
         $protocol = Arr::get($this->config, 'protocol', 'http');
         $ip = Arr::get($this->config, 'listen_ip', '0.0.0.0');
         $port = Arr::get($this->config, 'listen_port', 1123);
-        $socketType = Arr::get($this->config, 'socket_type', 'SWOOLE_SOCK_TCP');
-        $model = Arr::get($this->config, 'swoole_model', 'SWOOLE_PROCESS');
-
-        $socketType = constant($socketType);
-        $model = constant($model);
+        $socketType = Arr::get($this->config, 'socket_type', SWOOLE_SOCK_TCP);
+        $model = Arr::get($this->config, 'swoole_model', SWOOLE_PROCESS);
 
         if ('http' === $protocol) {
             $this->swooleServer = new SwooleHttpServer($ip, $port, $model, $socketType);
@@ -210,6 +228,50 @@ class Server
     }
 
     /**
+     * 创建所有的table
+     *
+     * @return int
+     */
+    public function bootstrapCreateTable()
+    {
+        $this->tableManager = new TableManager(Arr::get($this->config, 'tables', []));
+        return $this->tableManager->bootstrapCreate();
+    }
+
+    /**
+     * 创建所有的计数器
+     *
+     * @return int
+     */
+    public function bootstrapCreateCounter()
+    {
+        $this->counterManager = new CounterManager(Arr::get($this->config, 'counters', []));
+        return $this->counterManager->bootstrapCreate();
+    }
+
+    /**
+     * 创建所有的互斥锁
+     *
+     * @return int
+     */
+    public function bootstrapCreateMutex()
+    {
+        $this->mutexManager = new MutexManager(Arr::get($this->config, 'mutex', []));
+        return $this->mutexManager->bootstrapCreate();
+    }
+
+    /**
+     * 创建进程
+     *
+     * @return void
+     */
+    public function bootstrapCreateProcess()
+    {
+        $manager = new ProcessManager(Arr::get($this->config, 'processes', []));
+        $manager->bootstrapCreate($this);
+    }
+
+    /**
      * 注册swoole的时间监听.
      */
     protected function bootstrapSwooleConfig()
@@ -226,6 +288,7 @@ class Server
         $this->bootstrapSwooleConfig();
         $this->bootstrapRegisterSwooleEvent();
         $this->bootstrapRegisterSwooleEventListener();
+        $this->bootstrapCreateProcess();
 
         $this->getSwooleServer()->start();
     }
@@ -236,6 +299,30 @@ class Server
     public function getSwooleServer()
     {
         return $this->swooleServer;
+    }
+
+    /**
+     * @return TableManager
+     */
+    public function getTableManager()
+    {
+        return $this->tableManager;
+    }
+
+    /**
+     * @return CounterManager
+     */
+    public function getCounterManager()
+    {
+        return $this->counterManager;
+    }
+
+    /**
+     * @return MutexManager
+     */
+    public function getMutexManager()
+    {
+        return $this->mutexManager;
     }
 
     /**
