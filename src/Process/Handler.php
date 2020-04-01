@@ -8,6 +8,7 @@
 
 namespace HughCube\Laravel\Swoole\Process;
 
+use App\Services\IpService;
 use HughCube\Laravel\Swoole\Server;
 use Swoole\Process as SwooleProcess;
 
@@ -47,7 +48,6 @@ class Handler
 
     public function handle()
     {
-        echo date('Y-m-d H:i:s  '), static::class, PHP_EOL;
         sleep(1);
     }
 }

@@ -45,7 +45,7 @@ class Manager
      */
     public function table($name = null)
     {
-        $name = null == $name ?: 'default';
+        $name = null == $name ? 'default' : $name;
 
         if (isset($this->connections[$name])) {
             return $this->connections[$name];
@@ -65,7 +65,7 @@ class Manager
      */
     protected function resolve($name = null)
     {
-        $name = null == $name ? 'default' : $name;;
+        $name = null == $name ? 'default' : $name;
 
         if (!isset($this->config[$name])) {
             throw new InvalidArgumentException("Table [{$name}] not configured.");

@@ -8,6 +8,7 @@
 
 namespace HughCube\Laravel\Swoole;
 
+use App\Services\IpService;
 use HughCube\Laravel\Swoole\Counter\Manager as CounterManager;
 use HughCube\Laravel\Swoole\Events\BufferEmptyEvent;
 use HughCube\Laravel\Swoole\Events\BufferFullEvent;
@@ -157,11 +158,13 @@ class Server
         $this->app = $app;
         $this->config = $config;
 
-        $this->app->make('events')->dispatch(new InitServerEvent($this));
-
         $this->bootstrapCreateSwoole();
         $this->bootstrapCreateTable();
         $this->bootstrapCreateCounter();
+
+        $this->app->make('events')->dispatch(new InitServerEvent($this));
+
+        $this->app->instance(static::class, $this);
     }
 
     /**
@@ -169,6 +172,10 @@ class Server
      */
     protected function bootstrapCreateSwoole()
     {
+        if ('cli' !== php_sapi_name()) {
+            return;
+        }
+
         $protocol = Arr::get($this->config, 'protocol', 'http');
         $ip = Arr::get($this->config, 'listen_ip', '0.0.0.0');
         $port = Arr::get($this->config, 'listen_port', 1123);

@@ -13,6 +13,7 @@ use Illuminate\Http\Response as IlluminateResponse;
 use Laravel\Lumen\Application as LumenApplication;
 use Swoole\Http\Request as SwooleRequest;
 use Swoole\Http\Response as SwooleResponse;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class Sandbox
 {
@@ -27,13 +28,13 @@ class Sandbox
     }
 
     /**
-     * @param SwooleRequest  $request
+     * @param SwooleRequest $request
      * @param SwooleResponse $swooleResponse
      */
     public function handle(SwooleRequest $request, SwooleResponse $swooleResponse)
     {
         /** @var IlluminateResponse $response */
-        $response = $this->app->dispatch(Request::createFromSwoole($request));
+        $response = $this->app->dispatch(Request::createFromSwoole($this->app, $request));
 
         $this->sendIlluminateResponseHeaders($response, $swooleResponse);
         $swooleResponse->end($response->getContent());
@@ -41,15 +42,14 @@ class Sandbox
 
     /**
      * @param IlluminateResponse $illuminateResponse
-     * @param SwooleResponse     $swooleResponse
+     * @param SwooleResponse $swooleResponse
      */
     public function sendIlluminateResponseHeaders(
-        IlluminateResponse $illuminateResponse,
+        SymfonyResponse $symfonyResponse,
         SwooleResponse $swooleResponse
     ) {
         // headers
-        foreach ($illuminateResponse->headers->allPreserveCaseWithoutCookies() as $name => $values) {
-            $replace = 0 === strcasecmp($name, 'Content-Type');
+        foreach ($symfonyResponse->headers->allPreserveCaseWithoutCookies() as $name => $values) {
             foreach ($values as $value) {
                 $swooleResponse->header($name, $value);
             }
@@ -57,7 +57,7 @@ class Sandbox
 
         // cookies
         $hasIsRaw = null;
-        foreach ($illuminateResponse->headers->getCookies() as $cookie) {
+        foreach ($symfonyResponse->headers->getCookies() as $cookie) {
             if ($hasIsRaw === null) {
                 $hasIsRaw = method_exists($cookie, 'isRaw');
             }
@@ -74,6 +74,6 @@ class Sandbox
             );
         }
 
-        $swooleResponse->status($illuminateResponse->getStatusCode());
+        $swooleResponse->status($symfonyResponse->getStatusCode());
     }
 }

@@ -9,13 +9,44 @@
 namespace HughCube\Laravel\Swoole\Http;
 
 use Illuminate\Http\Request as IlluminateRequest;
+use Laravel\Lumen\Application as LumenApplication;
+use Laravel\Lumen\Http\Request as LumenRequest;
 use Swoole\Http\Request as SwooleRequest;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
-class Request extends IlluminateRequest
+class Request
 {
-    public static function createFromSwoole(SwooleRequest $swooleRequest)
+    public static function createFromSwoole($app, SwooleRequest $swooleRequest)
+    {
+        // Initialize laravel request
+        IlluminateRequest::enableHttpMethodParameterOverride();
+
+        $baseRequest = static::createBaseFromSwoole($swooleRequest);
+
+        if ($app instanceof LumenApplication) {
+            $request = LumenRequest::createFromBase($baseRequest);
+            $app->instance(LumenRequest::class, $request);
+        } else {
+            $request = IlluminateRequest::createFromBase($baseRequest);
+        }
+
+        if (0 === strpos($request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
+            && in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), ['PUT', 'DELETE', 'PATCH'])
+        ) {
+            parse_str($request->getContent(), $data);
+            $request->request = new ParameterBag($data);
+        }
+
+        return $request;
+    }
+
+
+    /**
+     * @param SwooleRequest $swooleRequest
+     * @return array|SymfonyRequest|null
+     */
+    protected static function createBaseFromSwoole(SwooleRequest $swooleRequest)
     {
         /** @var array $query The GET parameters */
         $query = empty($swooleRequest->get) ? [] : $swooleRequest->get;
@@ -42,20 +73,7 @@ class Request extends IlluminateRequest
         /** @var null|string $content The raw body data */
         $content = $swooleRequest->rawContent();
 
-        // Initialize laravel request
-        IlluminateRequest::enableHttpMethodParameterOverride();
-
-        $symfonyRequest = new SymfonyRequest($query, $request, $attributes, $cookies, $files, $server, $content);
-        $request = IlluminateRequest::createFromBase($symfonyRequest);
-
-        if (0 === strpos($request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
-            && in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), ['PUT', 'DELETE', 'PATCH'])
-        ) {
-            parse_str($request->getContent(), $data);
-            $request->request = new ParameterBag($data);
-        }
-
-        return $request;
+        return new SymfonyRequest($query, $request, $attributes, $cookies, $files, $server, $content);
     }
 
     /**
@@ -85,4 +103,6 @@ class Request extends IlluminateRequest
 
         return $phpServer;
     }
+
+
 }
