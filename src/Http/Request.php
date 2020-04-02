@@ -43,9 +43,9 @@ class Request
         return $request;
     }
 
-
     /**
      * @param SwooleRequest $swooleRequest
+     *
      * @return array|SymfonyRequest|null
      */
     protected static function createBaseFromSwoole(SwooleRequest $swooleRequest)
@@ -81,6 +81,7 @@ class Request
     /**
      * @param array $server
      * @param array $header
+     *
      * @return array
      */
     protected static function makeServerParameters(array $server, array $header)
@@ -97,7 +98,7 @@ class Request
             $key = strtoupper($key);
 
             if (!in_array($key, ['REMOTE_ADDR', 'SERVER_PORT', 'HTTPS'])) {
-                $key = 'HTTP_' . $key;
+                $key = 'HTTP_'.$key;
             }
 
             $phpServer[$key] = $value;

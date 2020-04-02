@@ -15,8 +15,7 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
 
 /**
- * Class ServiceProvider
- * @package HughCube\Laravel\Swoole
+ * Class ServiceProvider.
  */
 class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
 {
@@ -28,7 +27,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
     public function boot()
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $source = realpath($raw = __DIR__ . '/../config/swoole.php') ?: $raw;
+            $source = realpath($raw = __DIR__.'/../config/swoole.php') ?: $raw;
             $this->publishes([$source => config_path('swoole.php')]);
         }
 

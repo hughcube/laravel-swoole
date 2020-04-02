@@ -6,8 +6,7 @@ use HughCube\Laravel\Swoole\Server;
 use Swoole\Process as SwooleProcess;
 
 /**
- * Class Manager
- * @package HughCube\Laravel\Swoole\Table
+ * Class Manager.
  */
 class Manager
 {
@@ -29,7 +28,7 @@ class Manager
     }
 
     /**
-     * 创建所有
+     * 创建所有.
      *
      * @return void
      */
