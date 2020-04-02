@@ -7,8 +7,7 @@ use InvalidArgumentException;
 use Swoole\Table as SwooleTable;
 
 /**
- * Class Manager
- * @package HughCube\Laravel\Swoole\Table
+ * Class Manager.
  */
 class Manager
 {
@@ -59,9 +58,9 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleTable
      * @throws \InvalidArgumentException
      *
+     * @return SwooleTable
      */
     protected function resolve($name = null)
     {
@@ -91,7 +90,7 @@ class Manager
     }
 
     /**
-     * 创建所有的table
+     * 创建所有的table.
      *
      * @return int
      */

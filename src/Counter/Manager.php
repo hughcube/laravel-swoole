@@ -7,8 +7,7 @@ use InvalidArgumentException;
 use Swoole\Atomic as SwooleAtomic;
 
 /**
- * Class Manager
- * @package HughCube\Laravel\Swoole\Table
+ * Class Manager.
  */
 class Manager
 {
@@ -59,14 +58,13 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleAtomic
      * @throws \InvalidArgumentException
      *
+     * @return SwooleAtomic
      */
     protected function resolve($name = null)
     {
         $name = null == $name ? 'default' : $name;
-        ;
 
         if (!isset($this->config[$name])) {
             throw new InvalidArgumentException("Counter [{$name}] not configured.");
@@ -81,7 +79,7 @@ class Manager
     }
 
     /**
-     * 创建所有
+     * 创建所有.
      *
      * @return int
      */

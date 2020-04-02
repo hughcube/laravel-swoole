@@ -7,8 +7,7 @@ use InvalidArgumentException;
 use Swoole\Lock as SwooleLock;
 
 /**
- * Class Manager
- * @package HughCube\Laravel\Swoole\Lock
+ * Class Manager.
  */
 class Manager
 {
@@ -59,14 +58,13 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleLock
      * @throws \InvalidArgumentException
      *
+     * @return SwooleLock
      */
     protected function resolve($name = null)
     {
         $name = null == $name ? 'default' : $name;
-        ;
 
         if (!isset($this->config[$name])) {
             throw new InvalidArgumentException("Mutex [{$name}] not configured.");
@@ -85,7 +83,7 @@ class Manager
     }
 
     /**
-     * 创建所有的table
+     * 创建所有的table.
      *
      * @return int
      */
