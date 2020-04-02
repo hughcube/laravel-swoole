@@ -26,10 +26,12 @@ class Request
 
         if ($app instanceof LumenApplication) {
             $request = LumenRequest::createFromBase($baseRequest);
-            $app->instance(LumenRequest::class, $request);
         } else {
             $request = IlluminateRequest::createFromBase($baseRequest);
         }
+
+        $app->instance(get_class($request), $request);
+        $app->instance('request', $request);
 
         if (0 === strpos($request->headers->get('CONTENT_TYPE'), 'application/x-www-form-urlencoded')
             && in_array(strtoupper($request->server->get('REQUEST_METHOD', 'GET')), ['PUT', 'DELETE', 'PATCH'])
