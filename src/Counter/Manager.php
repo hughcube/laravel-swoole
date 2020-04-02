@@ -65,7 +65,8 @@ class Manager
      */
     protected function resolve($name = null)
     {
-        $name = null == $name ? 'default' : $name;;
+        $name = null == $name ? 'default' : $name;
+        ;
 
         if (!isset($this->config[$name])) {
             throw new InvalidArgumentException("Counter [{$name}] not configured.");

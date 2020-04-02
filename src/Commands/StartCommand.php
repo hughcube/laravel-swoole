@@ -25,14 +25,14 @@ class StartCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Save the configuration of pull ACM to a file';
+    protected $description = 'Start swoole server';
 
     /**
      * Execute the console command.
      *
+     * @return void
      * @throws \Exception
      *
-     * @return void
      */
     public function handle()
     {

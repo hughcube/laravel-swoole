@@ -41,7 +41,7 @@ class Sandbox
     }
 
     /**
-     * @param IlluminateResponse $illuminateResponse
+     * @param SymfonyResponse $symfonyResponse
      * @param SwooleResponse $swooleResponse
      */
     public function sendIlluminateResponseHeaders(

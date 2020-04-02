@@ -14,6 +14,10 @@ use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Laravel\Lumen\Application as LumenApplication;
 
+/**
+ * Class ServiceProvider
+ * @package HughCube\Laravel\Swoole
+ */
 class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
 {
     /**

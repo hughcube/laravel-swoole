@@ -337,7 +337,7 @@ class Server
      *
      * @codeCoverageIgnore
      *
-     * @param $process
+     * @param string $process
      */
     public function setProcessName($process)
     {

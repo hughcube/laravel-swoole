@@ -37,11 +37,9 @@ class Manager
     {
         foreach ($this->config as $handler) {
             if (!class_exists($handler)) {
-
             }
 
             if (!$handler instanceof Handler) {
-
             }
 
             $process = new SwooleProcess(function (SwooleProcess $process) use ($handler, $server) {

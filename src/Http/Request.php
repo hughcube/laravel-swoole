@@ -105,6 +105,4 @@ class Request
 
         return $phpServer;
     }
-
-
 }

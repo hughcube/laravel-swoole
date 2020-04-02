@@ -14,7 +14,6 @@ class StartListener extends Listener
 {
     public function handle(StartEvent $event)
     {
-        $event->getServer()->getSwooleServer()->port;
         $event->getServer()->setProcessName('master process');
     }
 }
