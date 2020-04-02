@@ -2,12 +2,12 @@
 
 return [
     'http' => [
-        'protocol' => 'http',
-        'listen_port' => env('SOCKET_LISTEN_PORT', 5200),
-        'listen_ip' => env('SOCKET_listen_ip', '0.0.0.0'),
-        'socket_type' => SWOOLE_SOCK_TCP,
+        'protocol'     => 'http',
+        'listen_port'  => env('SOCKET_LISTEN_PORT', 5200),
+        'listen_ip'    => env('SOCKET_listen_ip', '0.0.0.0'),
+        'socket_type'  => SWOOLE_SOCK_TCP,
         'swoole_model' => SWOOLE_PROCESS,
-        'setting' => [
+        'setting'      => [
             'log_level' => SWOOLE_LOG_TRACE,
         ],
 

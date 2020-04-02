@@ -28,7 +28,7 @@ class Sandbox
     }
 
     /**
-     * @param SwooleRequest $request
+     * @param SwooleRequest  $request
      * @param SwooleResponse $swooleResponse
      */
     public function handle(SwooleRequest $request, SwooleResponse $swooleResponse)
@@ -42,7 +42,7 @@ class Sandbox
 
     /**
      * @param SymfonyResponse $symfonyResponse
-     * @param SwooleResponse $swooleResponse
+     * @param SwooleResponse  $swooleResponse
      */
     public function sendIlluminateResponseHeaders(
         SymfonyResponse $symfonyResponse,
