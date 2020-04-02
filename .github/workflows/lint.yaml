@@ -3,16 +3,32 @@ name: Lint
 on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macOS-latest]
+        php-versions: ['7.0', '7.1', '7.2', '7.3', '7.4']
+    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+
+    env:
+      extensions: mbstring, xdebug, swoole
+
     steps:
-      - uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: ${{ env.extensions }}
 
       - name: System Setting
-        run: |
-          php -v
-          composer -V
-          php -m
+          run: |
+            php -v
+            composer -V
+            php -m
 
       - name: Validate composer.json and composer.lock
         run: composer validate
