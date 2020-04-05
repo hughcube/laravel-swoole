@@ -285,6 +285,25 @@ class Server
      */
     protected function bootstrapSwooleConfig()
     {
+        $setting = Arr::get($this->config, 'setting', []);
+
+        /**
+         * @see https://wiki.swoole.com/#/server/setting?id=worker_num
+         */
+        $setting['worker_num'] = isset($setting['worker_num']) ? $setting['worker_num'] : (swoole_cpu_num() * 2);
+        if (false === $setting['worker_num']) {
+            unset($setting['worker_num']);
+        }
+
+        /**
+         * @see https://wiki.swoole.com/#/server/setting?id=max_request
+         */
+        $setting['max_request'] = isset($setting['max_request']) ? $setting['max_request'] : 3000;
+        if (false === $setting['max_request']) {
+            unset($setting['max_request']);
+        }
+
+        $this->getSwooleServer()->set($setting);
     }
 
     /**
@@ -348,7 +367,7 @@ class Server
             return;
         }
 
-        $processName = Arr::get($this->config, 'process_name', 'swoole');
+        $processName = Arr::get($this->config, 'process_name', 'php-swoole');
         $appName = $this->app->make('config')->get('app.name', 'Swoole');
 
         swoole_set_process_name(sprintf('%s: %s for %s', $processName, $process, $appName));
