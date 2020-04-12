@@ -42,9 +42,9 @@ class Manager
      *
      * @return SwooleLock
      */
-    public function lock($name = null)
+    public function connection($name = null)
     {
-        $name = null == $name ?: 'default';
+        $name = null == $name ? 'default' : $name;
 
         if (isset($this->connections[$name])) {
             return $this->connections[$name];
@@ -58,9 +58,9 @@ class Manager
      *
      * @param string|null $name
      *
+     * @return SwooleLock
      * @throws \InvalidArgumentException
      *
-     * @return SwooleLock
      */
     protected function resolve($name = null)
     {
@@ -90,7 +90,7 @@ class Manager
     public function bootstrapCreate()
     {
         foreach ($this->config as $name => $table) {
-            $this->lock($name);
+            $this->connection($name);
         }
 
         return count($this->config);

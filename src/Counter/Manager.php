@@ -5,6 +5,7 @@ namespace HughCube\Laravel\Swoole\Counter;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Swoole\Atomic as SwooleAtomic;
+use Swoole\Atomic\Long as SwooleLongAtomic;
 
 /**
  * Class Manager.
@@ -42,7 +43,7 @@ class Manager
      *
      * @return SwooleAtomic
      */
-    public function atomic($name = null)
+    public function connection($name = null)
     {
         $name = null == $name ? 'default' : $name;
 
@@ -58,9 +59,9 @@ class Manager
      *
      * @param string|null $name
      *
+     * @return SwooleAtomic
      * @throws \InvalidArgumentException
      *
-     * @return SwooleAtomic
      */
     protected function resolve($name = null)
     {
@@ -70,10 +71,11 @@ class Manager
             throw new InvalidArgumentException("Counter [{$name}] not configured.");
         }
 
-        $value = Arr::get($this->config[$name], 0);
+        $type = Arr::get($this->config[$name], 'type');
+        $value = Arr::get($this->config[$name], 'value');
 
-        $atomic = new SwooleAtomic();
-        $atomic->set($value);
+        $atomic = 'long' === $type ? new SwooleLongAtomic() : new SwooleAtomic();
+        $atomic->set((null == $value ? 0 : $value));
 
         return $atomic;
     }
@@ -86,7 +88,7 @@ class Manager
     public function bootstrapCreate()
     {
         foreach ($this->config as $name => $item) {
-            $this->atomic($name);
+            $this->connection($name);
         }
 
         return count($this->config);

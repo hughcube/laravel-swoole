@@ -42,7 +42,7 @@ class Manager
      *
      * @return SwooleTable
      */
-    public function table($name = null)
+    public function connection($name = null)
     {
         $name = null == $name ? 'default' : $name;
 
@@ -58,9 +58,9 @@ class Manager
      *
      * @param string|null $name
      *
+     * @return SwooleTable
      * @throws \InvalidArgumentException
      *
-     * @return SwooleTable
      */
     protected function resolve($name = null)
     {
@@ -97,7 +97,7 @@ class Manager
     public function bootstrapCreate()
     {
         foreach ($this->config as $name => $table) {
-            $this->table($name);
+            $this->connection($name);
         }
 
         return count($this->config);
