@@ -158,12 +158,8 @@ class Server
         $this->config = $config;
 
         $this->bootstrapCreateSwoole();
-        $this->bootstrapCreateTable();
-        $this->bootstrapCreateCounter();
-        $this->bootstrapCreateMutex();
 
         $this->app->instance(static::class, $this);
-
         $this->app->make('events')->dispatch(new InitServerEvent($this));
     }
 
@@ -172,7 +168,7 @@ class Server
      */
     protected function bootstrapCreateSwoole()
     {
-        if ('cli' !== php_sapi_name()) {
+        if (!preg_match("/cli/i", php_sapi_name())) {
             return;
         }
 
@@ -235,42 +231,6 @@ class Server
     }
 
     /**
-     * 创建所有的table.
-     *
-     * @return int
-     */
-    public function bootstrapCreateTable()
-    {
-        $this->tableManager = new TableManager(Arr::get($this->config, 'tables', []));
-
-        return $this->tableManager->bootstrapCreate();
-    }
-
-    /**
-     * 创建所有的计数器.
-     *
-     * @return int
-     */
-    public function bootstrapCreateCounter()
-    {
-        $this->counterManager = new CounterManager(Arr::get($this->config, 'counters', []));
-
-        return $this->counterManager->bootstrapCreate();
-    }
-
-    /**
-     * 创建所有的互斥锁
-     *
-     * @return int
-     */
-    public function bootstrapCreateMutex()
-    {
-        $this->mutexManager = new MutexManager(Arr::get($this->config, 'mutex', []));
-
-        return $this->mutexManager->bootstrapCreate();
-    }
-
-    /**
      * 创建进程.
      *
      * @return void
@@ -328,30 +288,6 @@ class Server
     public function getSwooleServer()
     {
         return $this->swooleServer;
-    }
-
-    /**
-     * @return TableManager
-     */
-    public function getTableManager()
-    {
-        return $this->tableManager;
-    }
-
-    /**
-     * @return CounterManager
-     */
-    public function getCounterManager()
-    {
-        return $this->counterManager;
-    }
-
-    /**
-     * @return MutexManager
-     */
-    public function getMutexManager()
-    {
-        return $this->mutexManager;
     }
 
     /**

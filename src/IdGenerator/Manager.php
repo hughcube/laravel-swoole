@@ -1,11 +1,8 @@
 <?php
 
-namespace HughCube\Laravel\Swoole\Counter;
+namespace HughCube\Laravel\Swoole\IdGenerator;
 
-use Illuminate\Support\Arr;
 use InvalidArgumentException;
-use Swoole\Atomic as SwooleAtomic;
-use Swoole\Atomic\Long as SwooleLongAtomic;
 
 /**
  * Class Manager.
@@ -13,7 +10,7 @@ use Swoole\Atomic\Long as SwooleLongAtomic;
 class Manager
 {
     /**
-     * The acm server configurations.
+     * The IdGenerator server configurations.
      *
      * @var array
      */
@@ -22,7 +19,7 @@ class Manager
     /**
      * The connections.
      *
-     * @var SwooleAtomic[]
+     * @var Client[]
      */
     protected $connections = [];
 
@@ -41,7 +38,7 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleAtomic
+     * @return Client
      */
     public function connection($name = null)
     {
@@ -59,7 +56,7 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleAtomic
+     * @return Client
      * @throws \InvalidArgumentException
      *
      */
@@ -68,16 +65,12 @@ class Manager
         $name = null == $name ? 'default' : $name;
 
         if (!isset($this->config[$name])) {
-            throw new InvalidArgumentException("Counter [{$name}] not configured.");
+            throw new InvalidArgumentException("IdGenerator [{$name}] not configured.");
         }
 
-        $type = Arr::get($this->config[$name], 'type');
-        $value = Arr::get($this->config[$name], 'value');
+        $idGenerator = new Client($this->config[$name]);
 
-        $atomic = 'long' === $type ? new SwooleLongAtomic() : new SwooleAtomic();
-        $atomic->set((null == $value ? 0 : $value));
-
-        return $atomic;
+        return $idGenerator;
     }
 
     /**

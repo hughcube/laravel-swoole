@@ -9,6 +9,14 @@
 namespace HughCube\Laravel\Swoole;
 
 use HughCube\Laravel\Swoole\Commands\StartCommand;
+use HughCube\Laravel\Swoole\Counter\Counter;
+use HughCube\Laravel\Swoole\Counter\Manager as CounterManager;
+use HughCube\Laravel\Swoole\IdGenerator\IdGenerator;
+use HughCube\Laravel\Swoole\IdGenerator\Manager as IdGeneratorManager;
+use HughCube\Laravel\Swoole\Mutex\Manager as MutexManager;
+use HughCube\Laravel\Swoole\Mutex\Mutex;
+use HughCube\Laravel\Swoole\Table\Manager as TableManager;
+use HughCube\Laravel\Swoole\Table\Table;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -27,13 +35,20 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
     public function boot()
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $source = realpath($raw = __DIR__.'/../config/swoole.php') ?: $raw;
+            $source = realpath($raw = __DIR__ . '/../config/swoole.php') ?: $raw;
             $this->publishes([$source => config_path('swoole.php')]);
         }
 
         if ($this->app instanceof LumenApplication) {
             $this->app->configure('swoole');
         }
+
+        $this->app->make(Server::class);
+
+        Counter::bootstrap();
+        IdGenerator::bootstrap();
+        Mutex::bootstrap();
+        Table::bootstrap();
     }
 
     /**
@@ -43,16 +58,55 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
      */
     public function register()
     {
-        $this->app->singleton(Manager::class, function ($app) {
-            /** @var LaravelApplication|LumenApplication $app */
-            $config = $app->make('config')->get('swoole', []);
-
-            return new Manager($app, $config);
-        });
-
         if ($this->app->runningInConsole()) {
             $this->registerCommand();
         }
+
+        /**
+         * swoole 进程
+         */
+        $this->app->singleton(Server::class, function ($app) {
+            /** @var LaravelApplication|LumenApplication $app */
+            $config = $app->make('config')->get('swoole', []);
+
+            return new Server($app, $config);
+        });
+
+        /**
+         * swoole计数器
+         */
+        $this->app->singleton('swoole.counter', function ($app) {
+            $config = $app->make('config')->get('swoole.counters', []);
+
+            return new CounterManager($config);
+        });
+
+        /**
+         * ID生成器
+         */
+        $this->app->singleton('swoole.idGenerator', function ($app) {
+            $config = $app->make('config')->get('swoole.idGenerators', []);
+
+            return new IdGeneratorManager($config);
+        });
+
+        /**
+         * 全局锁
+         */
+        $this->app->singleton('swoole.mutex', function ($app) {
+            $config = $app->make('config')->get('swoole.mutex', []);
+
+            return new MutexManager($config);
+        });
+
+        /**
+         * 表存储
+         */
+        $this->app->singleton('swoole.table', function ($app) {
+            $config = $app->make('config')->get('swoole.tables', []);
+
+            return new TableManager($config);
+        });
     }
 
     protected function registerCommand()

@@ -87,7 +87,7 @@ class Manager
      *
      * @return int
      */
-    public function bootstrapCreate()
+    public function bootstrap()
     {
         foreach ($this->config as $name => $table) {
             $this->connection($name);

@@ -9,6 +9,7 @@
 namespace HughCube\Laravel\Swoole\Commands;
 
 use HughCube\Laravel\Swoole\Manager;
+use HughCube\Laravel\Swoole\Server;
 use Illuminate\Console\Command;
 
 class StartCommand extends Command
@@ -30,15 +31,12 @@ class StartCommand extends Command
     /**
      * Execute the console command.
      *
+     * @return void
      * @throws \Exception
      *
-     * @return void
      */
     public function handle()
     {
-        /** @var Manager $manager */
-        $manager = $this->laravel->make(Manager::class);
-
-        $manager->connection()->run();
+        $this->laravel->make(Server::class)->run();
     }
 }
