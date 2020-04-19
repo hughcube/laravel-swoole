@@ -58,9 +58,9 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleLock
      * @throws \InvalidArgumentException
      *
+     * @return SwooleLock
      */
     protected function resolve($name = null)
     {

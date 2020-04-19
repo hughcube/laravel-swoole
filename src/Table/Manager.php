@@ -58,9 +58,9 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleTable
      * @throws \InvalidArgumentException
      *
+     * @return SwooleTable
      */
     protected function resolve($name = null)
     {
