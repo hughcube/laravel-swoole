@@ -35,14 +35,6 @@ class Manager
     public function bootstrapCreate(Server $server)
     {
         foreach ($this->config as $handler) {
-            if (!class_exists($handler)) {
-                continue;
-            }
-
-            if (!$handler instanceof Handler) {
-                continue;
-            }
-
             $process = new SwooleProcess(function (SwooleProcess $process) use ($handler, $server) {
                 /** @var Handler $handler */
                 $handler = new $handler($server, $process);
