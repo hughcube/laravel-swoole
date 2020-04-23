@@ -168,7 +168,7 @@ class Server
      */
     protected function bootstrapCreateSwoole()
     {
-        if (!preg_match("/cli/i", php_sapi_name())) {
+        if (!preg_match('/cli/i', php_sapi_name())) {
             return;
         }
 

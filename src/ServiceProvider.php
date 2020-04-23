@@ -35,7 +35,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
     public function boot()
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $source = realpath($raw = __DIR__ . '/../config/swoole.php') ?: $raw;
+            $source = realpath($raw = __DIR__.'/../config/swoole.php') ?: $raw;
             $this->publishes([$source => config_path('swoole.php')]);
         }
 
@@ -63,7 +63,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
         }
 
         /**
-         * swoole 进程
+         * swoole 进程.
          */
         $this->app->singleton(Server::class, function ($app) {
             /** @var LaravelApplication|LumenApplication $app */
@@ -73,7 +73,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
         });
 
         /**
-         * swoole计数器
+         * swoole计数器.
          */
         $this->app->singleton('swoole.counter', function ($app) {
             $config = $app->make('config')->get('swoole.counters', []);
@@ -82,7 +82,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
         });
 
         /**
-         * ID生成器
+         * ID生成器.
          */
         $this->app->singleton('swoole.idGenerator', function ($app) {
             $config = $app->make('config')->get('swoole.idGenerators', []);
@@ -100,7 +100,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
         });
 
         /**
-         * 表存储
+         * 表存储.
          */
         $this->app->singleton('swoole.table', function ($app) {
             $config = $app->make('config')->get('swoole.tables', []);

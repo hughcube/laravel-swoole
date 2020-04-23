@@ -56,9 +56,9 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return Client
      * @throws \InvalidArgumentException
      *
+     * @return Client
      */
     protected function resolve($name = null)
     {
