@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/4/17
- * Time: 13:45
+ * Time: 13:45.
  */
 
 namespace HughCube\Laravel\Swoole\Counter;
@@ -13,8 +13,7 @@ use Swoole\Atomic as SwooleAtomic;
 use Swoole\Atomic\Long as SwooleLongAtomic;
 
 /**
- * Class Counter
- * @package HughCube\Laravel\Swoole\Counter
+ * Class Counter.
  *
  * @method static SwooleAtomic|SwooleLongAtomic connection(string $name = null)
  * @method static integer bootstrap()

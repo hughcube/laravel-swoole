@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/4/17
- * Time: 14:10
+ * Time: 14:10.
  */
 
 namespace HughCube\Laravel\Swoole\Table;
@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\Facade;
 use Swoole\Table as SwooleTable;
 
 /**
- * Class Table
- * @package HughCube\Laravel\Swoole\Table
+ * Class Table.
  *
  * @method static SwooleTable connection(string $name = null)
  * @method static integer bootstrap()

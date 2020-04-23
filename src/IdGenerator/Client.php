@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/3/31
- * Time: 21:03
+ * Time: 21:03.
  */
 
 namespace HughCube\Laravel\Swoole\IdGenerator;
@@ -16,13 +16,7 @@ use Swoole\Process as SwooleProcess;
 use Swoole\Table as SwooleTable;
 
 /**
- * Class IdGeneratorService
- * @package App\Services
- *
- * 总共 64 - 1 位
- * 时间戳预留41位, 也就是2199023255551毫秒, 69年
- * workId预留10位, 也就是, 0 - 1023
- * 每秒sequence预留12位, 也就是 0 - 4091
+ * Class IdGeneratorService.
  */
 class Client
 {
@@ -33,35 +27,35 @@ class Client
      * 最大保留的时间计数器, 也就是会保留半个小时的数据
      * ?
      * 1: 可以防止时间回拨
-     * 2: 可以如果当前毫秒顺序号不够可以往前借位
+     * 2: 可以如果当前毫秒顺序号不够可以往前借位.
      *
      * @var int
      */
     protected $maxKeepTimestampSequence = 10;
 
     /**
-     * 限制的每毫秒最大id生成数
+     * 限制的每毫秒最大id生成数.
      *
      * @var int
      */
     protected $maxSequence = 4091;
 
     /**
-     * 限制的最大workId
+     * 限制的最大workId.
      *
      * @var int
      */
     protected $maxWorkId = 1023;
 
     /**
-     * 限制的每秒最大id生成数
+     * 限制的每秒最大id生成数.
      *
      * @var int
      */
     protected $maxSequenceBinLength;
 
     /**
-     * 限制的最大workId
+     * 限制的最大workId.
      *
      * @var int
      */
@@ -97,15 +91,16 @@ class Client
     }
 
     /**
-     * @return integer
      * @throws
+     *
+     * @return int
      */
     public function getId()
     {
         $millisecond = Carbon::now()->getPreciseTimestamp(3);
 
         /**
-         * 通过读锁来确保, 在生成id的时候workId不会发生变化
+         * 通过读锁来确保, 在生成id的时候workId不会发生变化.
          */
         $this->mutex->lock_read();
         while (true) {
@@ -123,7 +118,7 @@ class Client
         $this->mutex->unlock();
 
         /**
-         * 如果workID不存在, 需要重新处理
+         * 如果workID不存在, 需要重新处理.
          */
         if (
             (null !== $this->maxWorkId && $workId > $this->maxWorkId)
@@ -133,38 +128,39 @@ class Client
         }
 
         /**
-         * 时间 2020-01-01 00:00:00  起
+         * 时间 2020-01-01 00:00:00  起.
          */
         $binTimestamp = $this->baseConvert(strval($millisecond - 1577836800000), 10, 2);
 
         /**
-         * WorkId
+         * WorkId.
          */
         $binWorkId = $this->baseConvert(strval(intval($workId)), 10, 2);
         $binWorkId = str_pad($binWorkId, $this->maxWorkIdBinLength, '0', STR_PAD_LEFT);
 
         /**
-         * 顺序号
+         * 顺序号.
          */
         $binSequence = $this->baseConvert(strval($sequence), 10, 2);
         $binSequence = str_pad($binSequence, $this->maxSequenceBinLength, '0', STR_PAD_LEFT);
 
         /**
-         * 拼接
+         * 拼接.
          */
         $binId = "{$binTimestamp}{$binWorkId}{$binSequence}";
 
         /**
-         * 返回10进制的id
+         * 返回10进制的id.
          */
         return $this->baseConvert($binId, 2, 10);
     }
 
     /**
-     * 获取workId
+     * 获取workId.
      *
-     * @return integer
      * @throws \Exception
+     *
+     * @return int
      */
     public function getWorkId($millisecond = null)
     {
@@ -184,12 +180,14 @@ class Client
     }
 
     /**
-     * 设置workid
+     * 设置workid.
      *
-     * @param integer $id
-     * @param integer $expires
-     * @return bool|mixed
+     * @param int $id
+     * @param int $expires
+     *
      * @throws \Exception
+     *
+     * @return bool|mixed
      */
     public function setWorkId($id, $expires)
     {
@@ -206,7 +204,7 @@ class Client
     }
 
     /**
-     * 调整表
+     * 调整表.
      */
     public function gc()
     {
@@ -231,11 +229,12 @@ class Client
     }
 
     /**
-     * 进制转换
+     * 进制转换.
      *
      * @param string $number
-     * @param integer $frombase
-     * @param integer $tobase
+     * @param int    $frombase
+     * @param int    $tobase
+     *
      * @return string
      */
     protected function baseConvert($number, $frombase, $tobase)
@@ -244,7 +243,7 @@ class Client
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getMaxTableSize()
     {
@@ -282,7 +281,7 @@ class Client
      */
     public function bootstrapGcHandler()
     {
-        if (!preg_match("/cli/i", php_sapi_name())) {
+        if (!preg_match('/cli/i', php_sapi_name())) {
             return;
         }
 

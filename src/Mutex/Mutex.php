@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/4/17
- * Time: 14:06
+ * Time: 14:06.
  */
 
 namespace HughCube\Laravel\Swoole\Mutex;
@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Facade;
 use Swoole\Lock as SwooleLock;
 
 /**
- * Class Mutex
- * @package HughCube\Laravel\Swoole\Mutex
+ * Class Mutex.
+ *
  * @method static SwooleLock connection(string $name = null)
  * @method static integer bootstrap()
  */
