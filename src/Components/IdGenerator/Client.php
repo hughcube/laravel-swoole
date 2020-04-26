@@ -6,13 +6,12 @@
  * Time: 21:03.
  */
 
-namespace HughCube\Laravel\Swoole\IdGenerator;
+namespace HughCube\Laravel\Swoole\Components\IdGenerator;
 
 use Carbon\Carbon;
-use HughCube\Laravel\Swoole\Server;
+use HughCube\Laravel\Swoole\Components\Process\Process;
 use Illuminate\Support\Arr;
 use Swoole\Lock as SwooleLock;
-use Swoole\Process as SwooleProcess;
 use Swoole\Table as SwooleTable;
 
 /**
@@ -91,9 +90,9 @@ class Client
     }
 
     /**
+     * @return int
      * @throws
      *
-     * @return int
      */
     public function getId()
     {
@@ -158,9 +157,9 @@ class Client
     /**
      * 获取workId.
      *
+     * @return int
      * @throws \Exception
      *
-     * @return int
      */
     public function getWorkId($millisecond = null)
     {
@@ -185,9 +184,9 @@ class Client
      * @param int $id
      * @param int $expires
      *
+     * @return bool|mixed
      * @throws \Exception
      *
-     * @return bool|mixed
      */
     public function setWorkId($id, $expires)
     {
@@ -232,8 +231,8 @@ class Client
      * 进制转换.
      *
      * @param string $number
-     * @param int    $frombase
-     * @param int    $tobase
+     * @param int $frombase
+     * @param int $tobase
      *
      * @return string
      */
@@ -281,21 +280,12 @@ class Client
      */
     public function bootstrapGcHandler()
     {
-        if (!preg_match('/cli/i', php_sapi_name())) {
-            return;
-        }
-
-        /** @var Server $server */
-        $server = app()->make(Server::class);
-
-        $process = new SwooleProcess(function (SwooleProcess $process) {
+        Process::addProcess(function () {
             for ($i = 1; $i <= 100; $i++) {
                 $this->gc();
 
                 sleep(ceil($this->maxKeepTimestampSequence / 1000 * 0.5));
             }
         });
-
-        $server->getSwooleServer()->addProcess($process);
     }
 }

@@ -6,7 +6,7 @@
  * Time: 14:10.
  */
 
-namespace HughCube\Laravel\Swoole\Table;
+namespace HughCube\Laravel\Swoole\Components\Table;
 
 use Illuminate\Support\Facades\Facade;
 use Swoole\Table as SwooleTable;

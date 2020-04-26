@@ -9,14 +9,16 @@
 namespace HughCube\Laravel\Swoole;
 
 use HughCube\Laravel\Swoole\Commands\StartCommand;
-use HughCube\Laravel\Swoole\Counter\Counter;
-use HughCube\Laravel\Swoole\Counter\Manager as CounterManager;
-use HughCube\Laravel\Swoole\IdGenerator\IdGenerator;
-use HughCube\Laravel\Swoole\IdGenerator\Manager as IdGeneratorManager;
-use HughCube\Laravel\Swoole\Mutex\Manager as MutexManager;
-use HughCube\Laravel\Swoole\Mutex\Mutex;
-use HughCube\Laravel\Swoole\Table\Manager as TableManager;
-use HughCube\Laravel\Swoole\Table\Table;
+use HughCube\Laravel\Swoole\Components\Counter\Counter;
+use HughCube\Laravel\Swoole\Components\Counter\Manager as CounterManager;
+use HughCube\Laravel\Swoole\Components\IdGenerator\IdGenerator;
+use HughCube\Laravel\Swoole\Components\IdGenerator\Manager as IdGeneratorManager;
+use HughCube\Laravel\Swoole\Components\Mutex\Manager as MutexManager;
+use HughCube\Laravel\Swoole\Components\Mutex\Mutex;
+use HughCube\Laravel\Swoole\Components\Process\Manager as ProcessManager;
+use HughCube\Laravel\Swoole\Components\Process\Process;
+use HughCube\Laravel\Swoole\Components\Table\Manager as TableManager;
+use HughCube\Laravel\Swoole\Components\Table\Table;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -35,7 +37,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
     public function boot()
     {
         if ($this->app instanceof LaravelApplication && $this->app->runningInConsole()) {
-            $source = realpath($raw = __DIR__.'/../config/swoole.php') ?: $raw;
+            $source = realpath($raw = __DIR__ . '/../config/swoole.php') ?: $raw;
             $this->publishes([$source => config_path('swoole.php')]);
         }
 
@@ -49,6 +51,7 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
         IdGenerator::bootstrap();
         Mutex::bootstrap();
         Table::bootstrap();
+        Process::bootstrap();
     }
 
     /**
@@ -106,6 +109,15 @@ class ServiceProvider extends BaseServiceProvider implements DeferrableProvider
             $config = $app->make('config')->get('swoole.tables', []);
 
             return new TableManager($config);
+        });
+
+        /**
+         * 进程
+         */
+        $this->app->singleton('swoole.process', function ($app) {
+            $config = $app->make('config')->get('swoole.processes', []);
+
+            return new ProcessManager($config);
         });
     }
 

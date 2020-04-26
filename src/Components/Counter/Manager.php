@@ -1,10 +1,11 @@
 <?php
 
-namespace HughCube\Laravel\Swoole\Table;
+namespace HughCube\Laravel\Swoole\Components\Counter;
 
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
-use Swoole\Table as SwooleTable;
+use Swoole\Atomic as SwooleAtomic;
+use Swoole\Atomic\Long as SwooleLongAtomic;
 
 /**
  * Class Manager.
@@ -21,7 +22,7 @@ class Manager
     /**
      * The connections.
      *
-     * @var SwooleTable[]
+     * @var SwooleAtomic[]
      */
     protected $connections = [];
 
@@ -40,7 +41,7 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleTable
+     * @return SwooleAtomic
      */
     public function connection($name = null)
     {
@@ -60,43 +61,33 @@ class Manager
      *
      * @throws \InvalidArgumentException
      *
-     * @return SwooleTable
+     * @return SwooleAtomic
      */
     protected function resolve($name = null)
     {
         $name = null == $name ? 'default' : $name;
 
         if (!isset($this->config[$name])) {
-            throw new InvalidArgumentException("Table [{$name}] not configured.");
+            throw new InvalidArgumentException("Counter [{$name}] not configured.");
         }
 
-        $size = Arr::get($this->config[$name], 'size');
-        $conflictProportion = Arr::get($this->config[$name], 'conflict_proportion', 0.2);
-        $columns = Arr::get($this->config[$name], 'columns', []);
+        $type = Arr::get($this->config[$name], 'type');
+        $value = Arr::get($this->config[$name], 'value');
 
-        $table = new SwooleTable($size, $conflictProportion);
+        $atomic = 'long' === $type ? new SwooleLongAtomic() : new SwooleAtomic();
+        $atomic->set((null == $value ? 0 : $value));
 
-        foreach ($columns as $column) {
-            if (isset($column['size'])) {
-                $table->column($column['name'], $column['type'], $column['size']);
-            } else {
-                $table->column($column['name'], $column['type']);
-            }
-        }
-
-        $table->create();
-
-        return $table;
+        return $atomic;
     }
 
     /**
-     * 创建所有的table.
+     * 创建所有.
      *
      * @return int
      */
     public function bootstrap()
     {
-        foreach ($this->config as $name => $table) {
+        foreach ($this->config as $name => $item) {
             $this->connection($name);
         }
 

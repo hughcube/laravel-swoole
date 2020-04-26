@@ -3,20 +3,22 @@
  * Created by IntelliJ IDEA.
  * User: hugh.li
  * Date: 2020/4/17
- * Time: 13:58.
+ * Time: 13:45.
  */
 
-namespace HughCube\Laravel\Swoole\IdGenerator;
+namespace HughCube\Laravel\Swoole\Components\Counter;
 
 use Illuminate\Support\Facades\Facade;
+use Swoole\Atomic as SwooleAtomic;
+use Swoole\Atomic\Long as SwooleLongAtomic;
 
 /**
- * Class IdGenerator.
+ * Class Counter.
  *
- * @method static Client connection(string $name = null)
+ * @method static SwooleAtomic|SwooleLongAtomic connection(string $name = null)
  * @method static integer bootstrap()
  */
-class IdGenerator extends Facade
+class Counter extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -25,6 +27,6 @@ class IdGenerator extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'swoole.idGenerator';
+        return 'swoole.counter';
     }
 }

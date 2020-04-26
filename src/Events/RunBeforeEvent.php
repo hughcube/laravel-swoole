@@ -10,7 +10,7 @@ namespace HughCube\Laravel\Swoole\Events;
 
 use Swoole\Server as SwooleServer;
 
-class RunServerEvent extends Event
+class RunBeforeEvent extends Event
 {
     /**
      * @var SwooleServer

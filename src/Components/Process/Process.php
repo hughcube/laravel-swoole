@@ -2,22 +2,21 @@
 /**
  * Created by IntelliJ IDEA.
  * User: hugh.li
- * Date: 2020/4/17
- * Time: 14:06.
+ * Date: 2020/4/24
+ * Time: 18:24
  */
 
-namespace HughCube\Laravel\Swoole\Mutex;
+namespace HughCube\Laravel\Swoole\Components\Process;
 
 use Illuminate\Support\Facades\Facade;
-use Swoole\Lock as SwooleLock;
 
 /**
- * Class Mutex.
+ * Class Table.
  *
- * @method static SwooleLock connection(string $name = null)
+ * @method static Manager addProcess($process)
  * @method static integer bootstrap()
  */
-class Mutex extends Facade
+class Process extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -26,6 +25,6 @@ class Mutex extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'swoole.mutex';
+        return 'swoole.process';
     }
 }

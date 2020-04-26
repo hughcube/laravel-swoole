@@ -1,10 +1,8 @@
 <?php
 
-namespace HughCube\Laravel\Swoole\Mutex;
+namespace HughCube\Laravel\Swoole\Components\IdGenerator;
 
-use Illuminate\Support\Arr;
 use InvalidArgumentException;
-use Swoole\Lock as SwooleLock;
 
 /**
  * Class Manager.
@@ -12,7 +10,7 @@ use Swoole\Lock as SwooleLock;
 class Manager
 {
     /**
-     * The acm server configurations.
+     * The IdGenerator server configurations.
      *
      * @var array
      */
@@ -21,7 +19,7 @@ class Manager
     /**
      * The connections.
      *
-     * @var SwooleLock[]
+     * @var Client[]
      */
     protected $connections = [];
 
@@ -40,7 +38,7 @@ class Manager
      *
      * @param string|null $name
      *
-     * @return SwooleLock
+     * @return Client
      */
     public function connection($name = null)
     {
@@ -60,36 +58,29 @@ class Manager
      *
      * @throws \InvalidArgumentException
      *
-     * @return SwooleLock
+     * @return Client
      */
     protected function resolve($name = null)
     {
         $name = null == $name ? 'default' : $name;
 
         if (!isset($this->config[$name])) {
-            throw new InvalidArgumentException("Mutex [{$name}] not configured.");
+            throw new InvalidArgumentException("IdGenerator [{$name}] not configured.");
         }
 
-        $type = Arr::get($this->config[$name], 'type');
-        $lockfile = Arr::get($this->config[$name], 'lockfile');
+        $idGenerator = new Client($this->config[$name]);
 
-        if (empty($lockfile)) {
-            $lock = new SwooleLock($type);
-        } else {
-            $lock = new SwooleLock($type, $lockfile);
-        }
-
-        return $lock;
+        return $idGenerator;
     }
 
     /**
-     * 创建所有的table.
+     * 创建所有.
      *
      * @return int
      */
     public function bootstrap()
     {
-        foreach ($this->config as $name => $table) {
+        foreach ($this->config as $name => $item) {
             $this->connection($name);
         }
 
