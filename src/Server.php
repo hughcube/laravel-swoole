@@ -8,7 +8,6 @@
 
 namespace HughCube\Laravel\Swoole;
 
-use HughCube\Laravel\Swoole\Components\Process\Process;
 use HughCube\Laravel\Swoole\Counter\Manager as CounterManager;
 use HughCube\Laravel\Swoole\Events\BufferEmptyEvent;
 use HughCube\Laravel\Swoole\Events\BufferFullEvent;
@@ -166,10 +165,6 @@ class Server
      */
     protected function bootstrapCreateSwoole()
     {
-        if (!preg_match("/cli/i", php_sapi_name())) {
-            return;
-        }
-
         $protocol = Arr::get($this->config, 'protocol', 'http');
         $ip = Arr::get($this->config, 'listen_ip', '0.0.0.0');
         $port = Arr::get($this->config, 'listen_port', 1123);
